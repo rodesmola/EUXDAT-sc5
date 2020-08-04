@@ -63,7 +63,7 @@
               <v-form ref="form" v-model="isValid" style="margin-top: 10px; margin-bottom: 5px; text-size: 10px;" lazy-validation >
                 <v-layout row wrap style="text-align: left; padding-top: 8px; padding-bottom: 8px;">
 
-                  <v-expansion-panel v-model="panelPhenology" expand>
+                  <v-expansion-panel v-model="panelPhenology" expand >
                     <v-expansion-panel-content expand-icon="mdi-menu-down">
                       <template v-slot:header>
                         <div class="exp-tittle">Phenologic curve</div>
@@ -81,7 +81,7 @@
                       </template>
                       <div>        
                         <v-flex xs12 pl-2 row class="hidden-md-and-down">
-Work in progress
+<ManagementZone/>
                         </v-flex>                    
                       </div>
                     </v-expansion-panel-content>
@@ -169,16 +169,18 @@ import BingMaps from 'ol/source/BingMaps.js';
 import StartDialog from '@/components/StartDialog.vue'
 import PhenologicCurve from '@/components/PhenologicCurve.vue'
 import ClimaticPatterns from '@/components/ClimaticPatterns.vue'
+import ManagementZone from '@/components/ManagementZone.vue'
 
 export default {
   name: 'Map',
   components: {
     StartDialog,
     PhenologicCurve,
-    ClimaticPatterns
+    ClimaticPatterns,
+    ManagementZone
   },
   data: () => ({
-    startDialog: true,
+    startDialog: false,
     selectedBaseLayer: 'aerial',
     panelPhenology: [true],
     panelMZ: [false],
@@ -207,17 +209,17 @@ export default {
         })
       });
 
-      var selectedStyle = [
-        new Style({
-          stroke: new Stroke({
-            color: 'red',
-            width: 3
-          }),
-          fill: new Fill({
-            color: 'rgba(0, 0, 0, 0)'
-          })
-        })
-      ];
+      // var selectedStyle = [
+      //   new Style({
+      //     stroke: new Stroke({
+      //       color: 'red',
+      //       width: 3
+      //     }),
+      //     fill: new Fill({
+      //       color: 'rgba(0, 0, 0, 0)'
+      //     })
+      //   })
+      // ];
 
       //Aerial layer
       var aerialLayer =  new TileLayer({
@@ -261,6 +263,23 @@ export default {
         })
       });
 
+      // this.interactionSelect = new Select();
+      // myMap.addInteraction(this.interactionSelect);
+
+      // this.interactionSelect.on('select', function(e) {
+      //   e.target.getFeatures().forEach(function(f){
+
+      //     if(!f.getProperties().culture && !self.isDrawing){
+      //       self.outputGeojson = f.getProperties();
+      //       if(self.isOutput){
+      //         self.outputPanel = true;
+      //       }
+      //     }else{
+      //       f.setStyle(self.defaultStyle);
+      //     }
+      //   })
+      // });
+      
       this.map = myMap;
       this.$store.state.map = myMap;
     },//initMap
@@ -340,8 +359,9 @@ export default {
     this.initMap();
   },
   created(){
-    var user = JSON.parse(window.atob(this.$keycloak.token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
-    this.user = user;
+    
+    this.user = JSON.parse(window.atob(this.$keycloak.token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+    this.$store.state.user = this.user;
 
     this.$eventBus.$on('show-alert', (type, msg)  => {
       this.showAlert(type, msg);

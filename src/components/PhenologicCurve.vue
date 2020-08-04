@@ -1,4 +1,8 @@
 <template>
+
+<div>        <UserPolygons/>
+
+
     <v-flex xs12 pl-2 row class="hidden-md-and-down">
         <v-flex xs6>
             <v-menu ref="menuStartDate" v-model="menuStartDate" :close-on-content-click="false" :nudge-right="40" lazy
@@ -26,17 +30,22 @@
         </v-flex>   
 
         <v-flex xs12 sm12 md12 lg12 class="text-xs-right" style="padding: 0px; margin-bottom: 5px;">
-            <v-btn small dark round color="#27304c"  title="Run service" >
+            <v-btn small dark round color="#27304c" :loading="isLoading"  @click="pcService()" title="Run service" >
                 RUN
             </v-btn>
         </v-flex>
         
     </v-flex> 
+    </div>
 </template>
 
 <script>
+import UserPolygons from '@/components/UserPolygons.vue'
 export default {
     name: "PhenologicCurve",
+    components: {
+        UserPolygons
+    },
     props: {},
     data: () => ({
         inputDateRules: [
@@ -46,6 +55,7 @@ export default {
         endDate: "2020-12-31",
         menuStartDate: false,
         menuEndDate: false,
+        isLoading: false,
     }),
     watch: {
         menuStartDate (val) {
@@ -56,6 +66,12 @@ export default {
         },  
     },
     methods: {
+        pcService(){
+            //this.isLoading = true;
+
+
+
+        },
         saveStartDate (date) {
             this.$refs.menuStartDate.save(date)
         },

@@ -405,15 +405,14 @@ export default {
                 }
 
                 this.$http.get(this.graphURL).then(response => {
-                this.mbDialog = true;                    
-                setTimeout(function(){ 
-                    self.isLoading = false; 
-                    //self.showAlert("success", "Diagram retrieved successfully");
-                    self.$eventBus.$emit('show-alert', "success", "Diagram retrieved successfully"); 
-                }, 4000);                           
+                                        
+                    setTimeout(function(){ 
+                        self.isLoading = false;                                                 
+                        self.$eventBus.$emit('show-alert', "success", "Diagram retrieved successfully"); 
+                        self.mbDialog = true;
+                    }, 4000);                           
                 }, response => {
-                    this.isLoading = false;
-                    //this.showAlert("error", response.statusText);
+                    this.isLoading = false;                    
                     this.$eventBus.$emit('show-alert', "error", response.statusText); 
                 });
             } else {

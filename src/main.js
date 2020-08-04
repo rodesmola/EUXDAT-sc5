@@ -7,11 +7,8 @@ import VueKeyCloak from '@dsb-norge/vue-keycloak-js'
 import VueResource from 'vue-resource'
 
 import store from './store.js'
-////
+
 Vue.prototype.$eventBus = new Vue()
-
-
-////
 
 Vue.config.productionTip = true
 
