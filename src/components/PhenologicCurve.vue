@@ -1,41 +1,73 @@
 <template>
 
-<div>        <UserPolygons/>
+    <div>
+        <UserPolygons/>
 
+        <v-layout row wrap class="pa-1">
+            <v-flex xs6>
+                <v-menu ref="menuStartDate" v-model="menuStartDate" :close-on-content-click="false" :nudge-right="40" lazy
+                transition="scale-transition" offset-y full-width min-width="290px">
+                <template v-slot:activator="{ on }">
+                    <v-text-field color="#5cb860" :value="startDate" slot="activator" label="Start date*"
+                    :rules="inputDateRules" prepend-icon="event" readonly v-on="on"></v-text-field>
+                </template>
+                <v-date-picker ref="picker" v-model="startDate" scrollable color="#5cb860" first-day-of-week="1"
+                    :max="new Date().toISOString().substr(0, 10)" min="1985-01-01" @change="saveStartDate">
+                </v-date-picker>
+                </v-menu>
+            </v-flex>
+            <v-flex xs6>
+                <v-menu ref="menuEndDate" v-model="menuEndDate" :close-on-content-click="false" :nudge-right="40" lazy
+                transition="scale-transition" offset-y full-width min-width="290px">
+                <template v-slot:activator="{ on }">
+                    <v-text-field color="#5cb860" :value="endDate" slot="activator" label="End date*"
+                    :rules="inputDateRules" prepend-icon="event" readonly v-on="on"></v-text-field>
+                </template>
+                <v-date-picker ref="picker" v-model="endDate" scrollable color="#5cb860" first-day-of-week="1"
+                    :max="new Date().toISOString().substr(0, 10)" min="1985-01-01" @change="saveEndDate">
+                </v-date-picker>
+                </v-menu>
+            </v-flex>   
 
-    <v-flex xs12 pl-2 row class="hidden-md-and-down">
-        <v-flex xs6>
-            <v-menu ref="menuStartDate" v-model="menuStartDate" :close-on-content-click="false" :nudge-right="40" lazy
-            transition="scale-transition" offset-y full-width min-width="290px">
-            <template v-slot:activator="{ on }">
-                <v-text-field color="#5cb860" :value="startDate" slot="activator" label="Start date*"
-                :rules="inputDateRules" prepend-icon="event" readonly v-on="on"></v-text-field>
-            </template>
-            <v-date-picker ref="picker" v-model="startDate" scrollable color="#5cb860" first-day-of-week="1"
-                :max="new Date().toISOString().substr(0, 10)" min="1985-01-01" @change="saveStartDate">
-            </v-date-picker>
-            </v-menu>
-        </v-flex>
-        <v-flex xs6>
-            <v-menu ref="menuEndDate" v-model="menuEndDate" :close-on-content-click="false" :nudge-right="40" lazy
-            transition="scale-transition" offset-y full-width min-width="290px">
-            <template v-slot:activator="{ on }">
-                <v-text-field color="#5cb860" :value="endDate" slot="activator" label="End date*"
-                :rules="inputDateRules" prepend-icon="event" readonly v-on="on"></v-text-field>
-            </template>
-            <v-date-picker ref="picker" v-model="endDate" scrollable color="#5cb860" first-day-of-week="1"
-                :max="new Date().toISOString().substr(0, 10)" min="1985-01-01" @change="saveEndDate">
-            </v-date-picker>
-            </v-menu>
-        </v-flex>   
+            <v-flex xs12 sm12 md12 lg12 class="text-xs-right" style="padding: 0px; margin-bottom: 5px;">
+                <v-btn small dark round color="#27304c" :loading="isLoading"  @click="pcService()" title="Run service" >
+                    RUN
+                </v-btn>
+            </v-flex>
+            
+        </v-layout> 
 
-        <v-flex xs12 sm12 md12 lg12 class="text-xs-right" style="padding: 0px; margin-bottom: 5px;">
-            <v-btn small dark round color="#27304c" :loading="isLoading"  @click="pcService()" title="Run service" >
-                RUN
-            </v-btn>
-        </v-flex>
-        
-    </v-flex> 
+        <!------------ Phenologic curve dialog ------------>
+        <v-dialog v-model="pcDialog" max-width="800">
+            <v-card v-if = !isLoading> 
+                <v-card-title class="headline">
+                    <img style="width: 130px;" src="../assets/logo_titulo.png" alt="">
+                    <v-spacer></v-spacer>
+                    <v-btn icon title="Download graphic" @click="downloadGraph('default')">
+                    <v-icon color="#27304c">archive</v-icon>
+                    </v-btn>
+                </v-card-title>
+
+                <v-divider></v-divider>
+                <v-card-text>
+                    <v-flex xs12  class="pa-3" >
+                    <v-img :src="diagramURL" alt=""></v-img>
+                  <span v-html="diagramURL"></span> 
+                    </v-flex>
+                </v-card-text>
+            </v-card>
+            <v-card v-if = isLoading>
+                <v-card-text style="text-align: center;">
+                    <img style="width: 120px;" src="../assets/logo_titulo.png" alt=""><br>
+                    <v-progress-circular :size="60" :width="7" color="green" indeterminate style="margin-top: 15px;"></v-progress-circular>
+                    <v-flex xs12 style="color: #37aa48; font-size 12px; margin-bottom: 10px; margin-top: 10px;">
+                    Processing...
+                    </v-flex>
+                </v-card-text>
+            </v-card>
+        </v-dialog>
+        <!------------ /Phenologic curve dialog ------------>
+
     </div>
 </template>
 
@@ -56,6 +88,8 @@ export default {
         menuStartDate: false,
         menuEndDate: false,
         isLoading: false,
+        pcDialog: false,
+        diagramURL: ""
     }),
     watch: {
         menuStartDate (val) {
@@ -67,10 +101,42 @@ export default {
     },
     methods: {
         pcService(){
-            //this.isLoading = true;
 
+            this.isLoading = true;
+            this.pcDialog = true;
 
+            var self = this;
+            var url = 'https://sc5-backend.test.euxdat.eu/backend/phenology/startdate/'.concat(this.startDate, '/enddate/', this.endDate, '/png');
 
+            var geoJSON =
+                {
+                'type': 'FeatureCollection',
+                'crs': {
+                'type': 'name',
+                'properties': {
+                    'name': 'urn:ogc:def:crs:OGC:1.3:CRS84'
+                    }
+                },
+                'features': [{
+                    'type': 'Feature',
+                    'properties': {"name": self.$store.state.selectedPolygon.get('culture')},
+                    'geometry': {
+                        'type': 'Polygon',
+                        'coordinates': self.$store.state.selectedPolygon.getGeometry().getCoordinates()
+                        }
+                    }]
+                }
+
+            this.$http.post(url, geoJSON).then(response => {
+                self.isLoading = false;
+                
+                self.diagramURL = response.body;
+                this.$eventBus.$emit('show-alert', "success", response.statusText);
+            }, response => {
+                self.isLoading = false;
+                this.$eventBus.$emit('show-alert', "error", response.statusText);
+            });
+        
         },
         saveStartDate (date) {
             this.$refs.menuStartDate.save(date)

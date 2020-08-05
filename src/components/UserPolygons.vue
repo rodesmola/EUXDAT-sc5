@@ -1,41 +1,37 @@
 <template>
-    <v-flex xs12 pl-2 row>
-        <v-layout row wrap style="text-align: left; padding-top: 8px;">
+    <div>
+        <v-layout row wrap class="ml-2">
 
-            <v-flex xs12 pl-2 row>
-                <v-layout row wrap>
-                    <v-flex sm12 xs12 md6>
-                        <v-combobox
-                            v-model="selectedPolygon"
-                            :items="userPolygons.features"
-                            item-text="properties.culture"
-                            item-value="properties.pk"
-                            label="Select a polygon"
-                            v-on:change="zoomToPolygon(selectedPolygon.properties.pk)"
-                            color="green"
-                            :disabled="isOutput"
-                        ></v-combobox>
-                    </v-flex>
-
-                    <v-flex sm12 xs12 md6>
-                        <v-layout row wrap>
-                            <v-btn flat icon color="green" v-if="isSelected" :disabled="isDrawing || isOutput"
-                                style="margin: 6px 2px; width: 25px;" @click="zoomToPolygon(selectedPolygon.properties.pk)" title="Zoom to polygon">
-                                <v-icon>zoom_in</v-icon>
-                            </v-btn>
-                            <v-btn flat icon color="green" v-if="isSelected" :disabled="isDrawing || isOutput"
-                                style="margin: 6px 2px; width: 25px;" @click="dialogDeletePolygon = true" title="Delete selected polygon">
-                            <v-icon>delete</v-icon>
-                            </v-btn>
-                            <v-btn flat icon color="#27304c" :disabled="isOutput" style="margin: 6px 2px; width: 25px;"
-                                @click="drawPolygon()" title="Create new polygon">
-                                <v-icon>add_circle_outline</v-icon>
-                            </v-btn>
-                        </v-layout>
-                    </v-flex>
-                </v-layout>     
-
+            <v-flex sm6 xs12 md8 >
+                <v-combobox
+                    v-model="selectedPolygon"
+                    :items="userPolygons.features"
+                    item-text="properties.culture"
+                    item-value="properties.pk"
+                    label="Select a polygon"
+                    v-on:change="zoomToPolygon(selectedPolygon.properties.pk)"
+                    color="green"
+                    :disabled="isOutput"
+                ></v-combobox>
             </v-flex>
+
+            <v-flex sm6 xs12 md4>
+                <v-layout row wrap>
+                    <v-btn flat icon color="green" v-if="isSelected" :disabled="isDrawing || isOutput"
+                        style="margin: 6px 2px; width: 25px;" @click="zoomToPolygon(selectedPolygon.properties.pk)" title="Zoom to polygon">
+                        <v-icon>zoom_in</v-icon>
+                    </v-btn>
+                    <v-btn flat icon color="green" v-if="isSelected" :disabled="isDrawing || isOutput"
+                        style="margin: 6px 2px; width: 25px;" @click="dialogDeletePolygon = true" title="Delete selected polygon">
+                    <v-icon>delete</v-icon>
+                    </v-btn>
+                    <v-btn flat icon color="#27304c" :disabled="isOutput" style="margin: 6px 2px; width: 25px;"
+                        @click="drawPolygon()" title="Create new polygon">
+                        <v-icon>add_circle_outline</v-icon>
+                    </v-btn>
+                </v-layout>
+            </v-flex>
+             
         </v-layout> 
 
       <!------------ New polygon dialog start ------------>
@@ -117,7 +113,7 @@
       <!------------ Delete polygon dialog end ------------>
 
 
-    </v-flex> 
+    </div> 
 </template>
 
 <script>
@@ -232,6 +228,8 @@ export default {
             //this.interactionSelect.getFeatures().push(feature);
             //console.log(this.$store.state.map.getInteractions())
             this.polygonBBOX = feature.getGeometry().getExtent();
+
+            this.$store.state.selectedPolygon = feature;
 
         },//zoomToPolygon
 

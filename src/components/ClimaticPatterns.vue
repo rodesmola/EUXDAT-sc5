@@ -166,7 +166,6 @@
         </v-flex>
     </div>
 
-
     <!------------ MeteoBlue dialog ------------>
     <v-dialog v-model="mbDialog" max-width="800">
         <v-card v-if = !isLoading> 

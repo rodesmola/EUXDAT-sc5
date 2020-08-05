@@ -64,7 +64,7 @@
                 <v-layout row wrap style="text-align: left; padding-top: 8px; padding-bottom: 8px;">
 
                   <v-expansion-panel v-model="panelPhenology" expand >
-                    <v-expansion-panel-content expand-icon="mdi-menu-down">
+                    <v-expansion-panel-content expand-icon="mdi-menu-down" @click="panelMZ = !panelMZ">
                       <template v-slot:header>
                         <div class="exp-tittle">Phenologic curve</div>
                       </template>
@@ -134,6 +134,35 @@
           </div>
           <!------------ Zoom controls and layer manager end ------------>
 
+          <!------------ Output panel MZ start ------------>
+          <div class="flex xs10 sm3 md3 lg6 xl6" v-if="outputPanel" style="position: absolute; z-index: 10; top:260px; right: 10px; background-color: #27304c;">
+
+            <v-toolbar class="green" tabs height="30px" >
+              <v-toolbar-title style="padding: 0px;">
+                <span style="color:#27304c; font-size: 14px;">
+                  Outputs
+                </span>
+              </v-toolbar-title>
+              <v-spacer></v-spacer>
+              <v-btn icon title="Close output panel" @click="outputPanel = false">
+                <v-icon color="#27304c">clear</v-icon>
+              </v-btn>
+            </v-toolbar>
+
+            <div style="background-color: white; margin-top: 5px;">
+              <div class="pa-2">
+                <span><strong>Dates for norm mean</strong></span><br />
+
+                <span v-for="(value) in outputDates" v-bind:key="value"  style="margin-left: 8px;">
+                  {{value | truncate}} <br />
+                </span>
+              </div>
+              <v-img height="110" width="250" contain src="https://mapserver.test.euxdat.eu/cgi-bin/mapserv?map=/maps/management-zone/07a205f3-f2a4-44ef-a04c-d33dd4b4fc09/lai.map&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&FORMAT=image/png&TRANSPARENT=true&HEIGHT=200&WIDTH=400&LAYER=lai&SLD_version=1.1.0" alt=""></v-img>
+              
+            </div>
+          </div>
+          <!------------ Output panel MZ end ------------>
+
           <!------------ Alert start ------------>
           <div class="flex xs3" style="left: 10px; bottom: 10px; position: absolute; z-index: 10;" >
             <v-alert :value="isAlert" :type="alertType" dismissible transition="scale-transition">
@@ -182,14 +211,16 @@ export default {
   data: () => ({
     startDialog: false,
     selectedBaseLayer: 'aerial',
-    panelPhenology: [true],
-    panelMZ: [false],
+    panelPhenology: [false],
+    panelMZ: [true],
     panelCP: [false],
     isValid: false,    
     isAlert: false,
     alertMsg: "",
     alertType: "error",
     isLoading: false,
+    outputPanel: false,
+    outputDates: [],
   }),
   methods: {
     /**
@@ -329,23 +360,7 @@ export default {
       this.alertType = type;
       setTimeout(function(){ self.isAlert = false; }, 8000);
     },//showAlert
-    /**
-    * Get the map layer by name and return it as a OL layer object
-    *
-    * @param {object} map
-    * @param {string} name
-    * @return {object}
-    * @public
-    */
-    getLayerFromMapByName(map, name){
-      var layer;
-      map.getLayers().forEach(function(lyr) {
-        if(lyr.get('name') === name){
-          layer = lyr;
-        }
-      });
-      return layer;
-    },//getLayerFromMapByName
+
     /**
     * Logout the application using the Keycloak JavaScript adapter
     *
@@ -367,11 +382,17 @@ export default {
       this.showAlert(type, msg);
     });
 
+    this.$eventBus.$on('show-outputPanel', (bool, dates)  => {
+      this.outputPanel = bool;
+      this.outputDates = dates;
+      console.log(dates)
+    });
+
   },
   filters: {
     truncate: function(value) {
       if(value != undefined){
-        value = value.toString().substring(0, 8);
+        value = value.toString().substring(0, 16);
       }
       return value
     },
