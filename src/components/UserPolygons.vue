@@ -153,15 +153,15 @@ export default {
         initComponent(){
             this.selectedStyle = [
                 new Style({
-                stroke: new Stroke({
-                    color: 'red',
-                    width: 3
-                }),
-                fill: new Fill({
-                    color: 'rgba(0, 0, 0, 0)'
+                    stroke: new Stroke({
+                        color: 'red',
+                        width: 3
+                    }),
+                    fill: new Fill({
+                        color: 'rgba(0, 0, 0, 0)'
+                    })
                 })
-                })
-            ];
+            ]; 
         },
         /**
         * Get all the user polygons and add them to the map
@@ -169,15 +169,15 @@ export default {
         * @param {boolean} isInit
         * @public
         */
-        getUserLayers(isInit){      
+        getUserLayers(isInit){  
+ 
             var url = 'https://geodb-devel.test.euxdat.eu/xalkidiki/'.concat(this.$store.state.user.preferred_username,
                 '/fields/epsg/4326/geojson');
 
             this.$http.get(url).then(response => {
-                if(!isInit){
-                    this.getLayerFromMapByName('userPolygonsLayer').getSource().clear();
-                    this.userPolygons = [];
-                }
+           
+                this.getLayerFromMapByName('userPolygonsLayer').getSource().clear();
+                this.userPolygons = [];                
                 this.userPolygons = response.body;
                 this.getLayerFromMapByName('userPolygonsLayer').getSource().addFeatures((new GeoJSON()).readFeatures(response.body))
 
@@ -197,7 +197,7 @@ export default {
             var layer;
             this.$store.state.map.getLayers().forEach(function(lyr) {
                 if(lyr.get('name') === name){
-                layer = lyr;
+                    layer = lyr;
                 }
             });
             return layer;
@@ -230,6 +230,7 @@ export default {
             this.polygonBBOX = feature.getGeometry().getExtent();
 
             this.$store.state.selectedPolygon = feature;
+            this.$eventBus.$emit('is-selected', true);    
 
         },//zoomToPolygon
 
@@ -332,6 +333,7 @@ export default {
                 self.selectedPolygon = "";
                 //self.interactionSelect.getFeatures().clear();
                 self.isSelected = false;
+                this.$eventBus.$emit('is-selected', false);
 
                 }, response => {
                 this.$eventBus.$emit('show-alert', "error", response.statusText);
@@ -342,8 +344,13 @@ export default {
     },
     mounted: function(){
        this.getUserLayers(true);
-       this.initComponent()
+       this.initComponent();
     },
+    created(){
+        this.$eventBus.$on('remove-outputRaster', (lyrName)  => {
+             this.$store.state.map.removeLayer(this.getLayerFromMapByName(lyrName));     
+        });
+    }
 };
 </script>
 

@@ -1,40 +1,65 @@
 <template>
     <div>
-        <UserPolygons/>
-
-        <v-layout row wrap class="pa-1">
-            <v-flex xs6>
-                <v-menu ref="menuStartDate" v-model="menuStartDate" :close-on-content-click="false" :nudge-right="40" lazy
-                transition="scale-transition" offset-y full-width min-width="290px">
-                <template v-slot:activator="{ on }">
-                    <v-text-field color="#5cb860" :value="startDate" slot="activator" label="Start date*"
-                    :rules="inputDateRules" prepend-icon="event" readonly v-on="on"></v-text-field>
-                </template>
-                <v-date-picker ref="picker" v-model="startDate" scrollable color="#5cb860" first-day-of-week="1"
-                    :max="new Date().toISOString().substr(0, 10)" min="1985-01-01" @change="saveStartDate">
-                </v-date-picker>
-                </v-menu>
-            </v-flex>
-            <v-flex xs6>
-                <v-menu ref="menuEndDate" v-model="menuEndDate" :close-on-content-click="false" :nudge-right="40" lazy
-                transition="scale-transition" offset-y full-width min-width="290px">
-                <template v-slot:activator="{ on }">
-                    <v-text-field color="#5cb860" :value="endDate" slot="activator" label="End date"
-                    :rules="inputDateRules" prepend-icon="event" readonly v-on="on"></v-text-field>
-                </template>
-                <v-date-picker ref="picker" v-model="endDate" scrollable color="#5cb860" first-day-of-week="1"
-                    :max="new Date().toISOString().substr(0, 10)" min="1985-01-01" @change="saveEndDate">
-                </v-date-picker>
-                </v-menu>
-            </v-flex>   
-
-            <v-flex xs12 sm12 md12 lg12 class="text-xs-right" style="padding: 0px; margin-bottom: 5px;">
-                <v-btn small dark round color="#27304c" :loading="isLoading"  @click="mzService()" title="Run service" >
-                    RUN
-                </v-btn>
-            </v-flex>
+     
+        <div style="background-color: white; padding-left: 10px; padding-right: 10px;">
             
-        </v-layout>
+            <UserPolygons/>
+
+            <v-form ref="form" style="margin-top: 10px; margin-bottom: 5px; text-size: 10px;" lazy-validation >
+                <v-layout row wrap style="text-align: left; padding-top: 8px;">
+           
+                    <v-flex xs6>
+                        <v-menu ref="menuStartDate" v-model="menuStartDate" :close-on-content-click="false" :nudge-right="40" lazy
+                        transition="scale-transition" offset-y full-width min-width="290px">
+                        <template v-slot:activator="{ on }">
+                            <v-text-field color="#5cb860" :value="startDate" slot="activator" label="Start date*"
+                            :rules="inputDateRules" prepend-icon="event" readonly v-on="on"></v-text-field>
+                        </template>
+                        <v-date-picker ref="picker" v-model="startDate" scrollable color="#5cb860" first-day-of-week="1"
+                            :max="new Date().toISOString().substr(0, 10)" min="2017-01-01" @change="saveStartDate">
+                        </v-date-picker>
+                        </v-menu>
+                    </v-flex>
+                    <v-flex xs6>
+                        <v-menu ref="menuEndDate" v-model="menuEndDate" :close-on-content-click="false" :nudge-right="40" lazy
+                        transition="scale-transition" offset-y full-width min-width="290px">
+                        <template v-slot:activator="{ on }">
+                            <v-text-field color="#5cb860" :value="endDate" slot="activator" label="End date"
+                            :rules="inputDateRules" prepend-icon="event" readonly v-on="on"></v-text-field>
+                        </template>
+                        <v-date-picker ref="picker" v-model="endDate" scrollable color="#5cb860" first-day-of-week="1"
+                            :max="new Date().toISOString().substr(0, 10)" :min="startDate" @change="saveEndDate">
+                        </v-date-picker>
+                        </v-menu>
+                    </v-flex>   
+
+                    <v-flex xs12 sm12 md12 lg12>
+                        <small v-if="!isOutput">* Indicates required field</small>
+                        <v-divider ></v-divider>
+                    </v-flex>
+
+                    <v-flex xs12 sm12 md12 lg12 v-if="!isSelected && !isOutput" class="green panel-chip">
+                        <span color="#4ba64f" label>Please select a polygon to start the service.</span>
+                    </v-flex>
+
+                    <v-flex xs12 sm12 md12 lg12 v-if="isOutput" class="panel-chip" style="background-color: #294247; color: white;">
+                        <span color="#4ba64f" label>Press "start" to remove outputs.
+                        <v-btn small flat dark @click="resetFrom()" title="Re-launch service">
+                            start
+                        </v-btn>
+                        </span>
+                    </v-flex>
+
+                    <v-flex xs12 sm12 md12 lg12 v-if="!isOutput && isSelected" class="text-xs-right" style="padding: 0px; margin-bottom: 5px;">
+                        <v-btn small round color="#27304c" dark @click="mzService()" title="Run service" >
+                        RUN
+                        </v-btn>
+                    </v-flex>
+
+                </v-layout>
+            </v-form>
+
+        </div>   
 
         <!------------ Progress dialog start ------------>
         <v-dialog v-model="isLoading" persistent max-width="180">
@@ -72,20 +97,14 @@ export default {
         inputDateRules: [
             v => !!v || ''
         ],
-        startDate: "2018-06-01",
+        startDate: "2020-05-01",
         endDate: "",
         menuStartDate: false,
         menuEndDate: false,
-        isLoading: false,             
+        isLoading: false,          
+        isOutput: false,
+        isSelected: false,
     }),
-    watch: {
-        menuStartDate (val) {
-            val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
-        },
-        menuEndDate (val) {
-            val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
-        },  
-    },
     methods: {
         mzService(){
 
@@ -127,16 +146,14 @@ export default {
                 self.addOutputLayer(response.body)                
                 this.$eventBus.$emit('show-alert', "success", response.statusText);
             }, response => {
-                self.isLoading = false;
-                console.log(response)
+                self.isLoading = false;                
                 if(response.status == 422){
                     this.$eventBus.$emit('show-alert', "error", response.body.message);
                 }else{
                     this.$eventBus.$emit('show-alert', "error", response.statusText);
-                }
-                
-            });
-        
+                }                
+            }); 
+      
         },
         addOutputLayer(response){        
             var self = this;          
@@ -164,18 +181,76 @@ export default {
             layer.setZIndex(1);
             self.$store.state.map.addLayer(layer)
             this.$eventBus.$emit('show-outputPanel', true, response.dates_for_norm_mean);
+            this.isOutput = true;
+            
+        }, //addOutputLayer        
+        /**
+        * Reset the form, clear layer selection and remove the output layer form map
+        *
+        * @public
+        */
+        resetFrom(){
+        
+            this.isOutput = false;
+            this.outputPanel = false;             
 
-        }, //addOutputLayer
+            this.$eventBus.$emit('remove-outputRaster', 'outputRaster');
+            this.$eventBus.$emit('show-outputPanel', false, [])
+            //this.$refs.form.reset();
+            this.startDate = "2020-05-01";
+            this.endDate = "";
+
+        },//resetFrom
         saveStartDate (date) {
             this.$refs.menuStartDate.save(date)
         },
         saveEndDate (date) {
             this.$refs.menuEndDate.save(date)
         },
+    },
+    watch: {
+        menuStartDate (val) {
+            val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+        },
+        menuEndDate (val) {
+            val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+        },  
+    },
+    created(){
+        this.$eventBus.$on('is-selected', (bool)  => {
+            this.isSelected = bool;            
+        });
     }
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.v-input {
+	font-size: 12px;
+	text-align: left;
+}
+.v-text-field {
+	padding-top: 0px;
+	margin-top: 4px;
+}
+
+.v-btn--small {
+	font-size: 12px;
+	height: 20px;
+	padding: 0 8px;
+  min-width: 58px;
+}
+
+.panel-chip {
+  padding: 0px;
+  text-align: center;
+  margin: 5px;
+  padding: 2px;
+  border-radius: 2px;
+  justify-content:
+  space-between;
+  font-family: 'Roboto', sans-serif;
+  font-size: 12px;
+}
 </style>

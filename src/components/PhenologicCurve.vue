@@ -1,41 +1,53 @@
 <template>
-
     <div>
+        <div style="background-color: white; padding-left: 10px; padding-right: 10px;">
         <UserPolygons/>
+            <v-form ref="form" style="margin-top: 10px; margin-bottom: 5px; text-size: 10px;" lazy-validation >
+                <v-layout row wrap style="text-align: left; padding-top: 8px;">
 
-        <v-layout row wrap class="pa-1">
-            <v-flex xs6>
-                <v-menu ref="menuStartDate" v-model="menuStartDate" :close-on-content-click="false" :nudge-right="40" lazy
-                transition="scale-transition" offset-y full-width min-width="290px">
-                <template v-slot:activator="{ on }">
-                    <v-text-field color="#5cb860" :value="startDate" slot="activator" label="Start date*"
-                    :rules="inputDateRules" prepend-icon="event" readonly v-on="on"></v-text-field>
-                </template>
-                <v-date-picker ref="picker" v-model="startDate" scrollable color="#5cb860" first-day-of-week="1"
-                    :max="new Date().toISOString().substr(0, 10)" min="1985-01-01" @change="saveStartDate">
-                </v-date-picker>
-                </v-menu>
-            </v-flex>
-            <v-flex xs6>
-                <v-menu ref="menuEndDate" v-model="menuEndDate" :close-on-content-click="false" :nudge-right="40" lazy
-                transition="scale-transition" offset-y full-width min-width="290px">
-                <template v-slot:activator="{ on }">
-                    <v-text-field color="#5cb860" :value="endDate" slot="activator" label="End date*"
-                    :rules="inputDateRules" prepend-icon="event" readonly v-on="on"></v-text-field>
-                </template>
-                <v-date-picker ref="picker" v-model="endDate" scrollable color="#5cb860" first-day-of-week="1"
-                    :max="new Date().toISOString().substr(0, 10)" min="1985-01-01" @change="saveEndDate">
-                </v-date-picker>
-                </v-menu>
-            </v-flex>   
+                    <v-flex xs6>
+                        <v-menu ref="menuStartDate" v-model="menuStartDate" :close-on-content-click="false" :nudge-right="40" lazy
+                        transition="scale-transition" offset-y full-width min-width="290px">
+                        <template v-slot:activator="{ on }">
+                            <v-text-field color="#5cb860" :value="startDate" slot="activator" label="Start date*"
+                            :rules="inputDateRules" prepend-icon="event" readonly v-on="on"></v-text-field>
+                        </template>
+                        <v-date-picker ref="picker" v-model="startDate" scrollable color="#5cb860" first-day-of-week="1"
+                            :max="new Date().toISOString().substr(0, 10)" min="2017-01-01" @change="saveStartDate">
+                        </v-date-picker>
+                        </v-menu>
+                    </v-flex>
+                    <v-flex xs6>
+                        <v-menu ref="menuEndDate" v-model="menuEndDate" :close-on-content-click="false" :nudge-right="40" lazy
+                        transition="scale-transition" offset-y full-width min-width="290px">
+                        <template v-slot:activator="{ on }">
+                            <v-text-field color="#5cb860" :value="endDate" slot="activator" label="End date*"
+                            :rules="inputDateRules" prepend-icon="event" readonly v-on="on"></v-text-field>
+                        </template>
+                        <v-date-picker ref="picker" v-model="endDate" scrollable color="#5cb860" first-day-of-week="1"
+                            :max="new Date().toISOString().substr(0, 10)" :min="startDate" @change="saveEndDate">
+                        </v-date-picker>
+                        </v-menu>
+                    </v-flex>   
 
-            <v-flex xs12 sm12 md12 lg12 class="text-xs-right" style="padding: 0px; margin-bottom: 5px;">
-                <v-btn small dark round color="#27304c" :loading="isLoading"  @click="pcService()" title="Run service" >
-                    RUN
-                </v-btn>
-            </v-flex>
+                    <v-flex xs12 sm12 md12 lg12>
+                        <small>* Indicates required field</small>
+                        <v-divider ></v-divider>
+                    </v-flex>
+
+                    <v-flex xs12 sm12 md12 lg12 v-if="!isSelected" class="green panel-chip">
+                        <span color="#4ba64f" label>Please select a polygon to start the service.</span>
+                    </v-flex>
+
+                    <v-flex xs12 sm12 md12 lg12 v-if="isSelected" class="text-xs-right" style="padding: 0px; margin-bottom: 5px;">
+                        <v-btn small round color="#27304c" dark @click="pcService()" title="Run service" >
+                        RUN
+                        </v-btn>
+                    </v-flex>
             
-        </v-layout> 
+                </v-layout>
+            </v-form>
+        </div>   
 
         <!------------ Phenologic curve dialog ------------>
         <v-dialog v-model="pcDialog" max-width="800">
@@ -83,22 +95,15 @@ export default {
         inputDateRules: [
         v => !!v || ''
         ],
-        startDate: "2020-01-01",
-        endDate: "2020-12-31",
+        startDate: "2017-01-01",
+        endDate: "2020-06-31",
         menuStartDate: false,
         menuEndDate: false,
         isLoading: false,
         pcDialog: false,
-        diagramURL: ""
+        diagramURL: "",
+        isSelected: false,
     }),
-    watch: {
-        menuStartDate (val) {
-            val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
-        },
-        menuEndDate (val) {
-            val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
-        },  
-    },
     methods: {
         pcService(){
 
@@ -144,13 +149,52 @@ export default {
         saveEndDate (date) {
             this.$refs.menuEndDate.save(date)
         },
+    },
+    watch: {
+        menuStartDate (val) {
+            val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+        },
+        menuEndDate (val) {
+            val && setTimeout(() => (this.$refs.picker.activePicker = 'YEAR'))
+        },  
+    },
+    created(){
+        this.$eventBus.$on('is-selected', (bool)  => {
+            this.isSelected = bool;            
+        });
     }
-
 };
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+.v-input {
+	font-size: 12px;
+	text-align: left;
+}
+.v-text-field {
+	padding-top: 0px;
+	margin-top: 4px;
+}
+
+.v-btn--small {
+	font-size: 12px;
+	height: 20px;
+	padding: 0 8px;
+  min-width: 58px;
+}
+
+.panel-chip {
+  padding: 0px;
+  text-align: center;
+  margin: 5px;
+  padding: 2px;
+  border-radius: 2px;
+  justify-content:
+  space-between;
+  font-family: 'Roboto', sans-serif;
+  font-size: 12px;
+}
 </style>
 
 

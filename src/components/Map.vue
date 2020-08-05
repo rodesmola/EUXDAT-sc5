@@ -63,43 +63,22 @@
               <v-form ref="form" v-model="isValid" style="margin-top: 10px; margin-bottom: 5px; text-size: 10px;" lazy-validation >
                 <v-layout row wrap style="text-align: left; padding-top: 8px; padding-bottom: 8px;">
 
-                  <v-expansion-panel v-model="panelPhenology" expand >
-                    <v-expansion-panel-content expand-icon="mdi-menu-down" @click="panelMZ = !panelMZ">
+                  <v-expansion-panel>
+                    <v-expansion-panel-content expand-icon="mdi-menu-down" v-for="(item,i) in panels" :key="i">
                       <template v-slot:header>
-                        <div class="exp-tittle">Phenologic curve</div>
+                        <div class="exp-tittle">{{item.name}}</div>
                       </template>
-                      <div>                                
-<PhenologicCurve/>                                           
+                      <div v-if="i === 0">
+                        <PhenologicCurve/>
+                      </div>
+                      <div v-if="i === 1">
+                        <ManagementZone/>
+                      </div>
+                      <div v-if="i === 2">
+                        <ClimaticPatterns/>
                       </div>
                     </v-expansion-panel-content>
                   </v-expansion-panel>
-
-                  <v-expansion-panel v-model="panelMZ" expand>
-                    <v-expansion-panel-content expand-icon="mdi-menu-down">
-                      <template v-slot:header>
-                        <div class="exp-tittle">Management zone</div>
-                      </template>
-                      <div>        
-                        <v-flex xs12 pl-2 row class="hidden-md-and-down">
-<ManagementZone/>
-                        </v-flex>                    
-                      </div>
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>
-
-                <v-expansion-panel v-model="panelCP" expand>
-                    <v-expansion-panel-content expand-icon="mdi-menu-down">
-                      <template v-slot:header>
-                        <div class="exp-tittle">Cimatic pattenrs</div>
-                      </template>
-                      <div>        
-                        <v-flex xs12 pl-2 row class="hidden-md-and-down">
-<ClimaticPatterns/>
-                        </v-flex>                    
-                      </div>
-                    </v-expansion-panel-content>
-                  </v-expansion-panel>
-
                   
                 </v-layout>
               </v-form>
@@ -211,9 +190,11 @@ export default {
   data: () => ({
     startDialog: false,
     selectedBaseLayer: 'aerial',
-    panelPhenology: [false],
-    panelMZ: [true],
-    panelCP: [false],
+    panels: [
+      {"name": "Phenologic curve"}, 
+      {"name": "Management zone"}, 
+      {"name": "Cimatic pattenrs"}
+    ],
     isValid: false,    
     isAlert: false,
     alertMsg: "",
@@ -384,8 +365,7 @@ export default {
 
     this.$eventBus.$on('show-outputPanel', (bool, dates)  => {
       this.outputPanel = bool;
-      this.outputDates = dates;
-      console.log(dates)
+      this.outputDates = dates;      
     });
 
   },
