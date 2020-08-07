@@ -42,7 +42,6 @@
 
         <v-flex id="map" style="max-height: 100vh; height: 100vh; padding: 0px; margin: 0px;">
 
-
           <!------------ Service form start ------------>
           <div class="flex xs12 sm5 md4 lg3 xl2" style="position: absolute; z-index: 10; top:80px; left: 10px; background-color: #27304c;">
             <v-toolbar class="green" tabs  height="42px">
@@ -56,10 +55,6 @@
                 <v-icon color="#27304c">info</v-icon>
               </v-btn>
 
-                    <v-btn icon @click="test()" title="More info">
-                test
-              </v-btn>
-
             </v-toolbar>
 
             <div style="background-color: white; padding-left: 10px; padding-right: 10px;">
@@ -70,10 +65,8 @@
                   <v-expansion-panel>
                     <v-expansion-panel-content expand-icon="mdi-menu-down" v-for="(item,i) in panels" :key="i" >
                      
-                      <template v-slot:header >
-                        
-                        <div class="exp-tittle" @click="updateComponent(i)">{{item.name}}</div>
-                        
+                      <template v-slot:header >                        
+                        <div class="exp-tittle" @click="updateComponent(i)">{{item.name}}</div>                      
                       </template>
                       
                       <div v-if="i === 0">
@@ -277,7 +270,6 @@ export default {
           drawLayer,
           osm
         ],
-        //controls: [],
         view: new View({
           projection: 'EPSG:4326', 
           center: [12.14, 48.51],          

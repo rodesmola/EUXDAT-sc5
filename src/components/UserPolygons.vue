@@ -112,7 +112,6 @@
       </v-dialog>
       <!------------ Delete polygon dialog end ------------>
 
-
     </div> 
 </template>
 
@@ -237,8 +236,6 @@ export default {
             var layer = this.getLayerFromMapByName('userPolygonsLayer');
             this.isDrawing = true;
 
-            //this.interactionSelect.getFeatures().clear();
-
             draw = new Draw({
                 source: layer.getSource(),
                 type: 'Polygon'
@@ -288,8 +285,7 @@ export default {
         if(this.$refs.formNew.validate()){
             this.$http.post(url, geoJSON).then(response => {
                 self.getUserLayers(false);
-                self.dialogAddPolygon = false;
-                //self.interactionSelect.getFeatures().clear();
+                self.dialogAddPolygon = false;                
                 self.newPolygonName = "New polygon";
                 this.$eventBus.$emit('show-alert', "success", response.statusText);
             }, response => {
