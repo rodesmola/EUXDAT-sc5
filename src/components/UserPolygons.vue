@@ -322,8 +322,7 @@ export default {
 
                 self.dialogDeletePolygon = false;
                 self.getUserLayers(false);
-                self.selectedPolygon = "";
-                //self.interactionSelect.getFeatures().clear();
+                self.selectedPolygon = "";                
                 self.isSelected = false;
                 this.$eventBus.$emit('is-selected', false);
 
