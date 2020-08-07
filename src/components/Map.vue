@@ -56,6 +56,10 @@
                 <v-icon color="#27304c">info</v-icon>
               </v-btn>
 
+                    <v-btn icon @click="test()" title="More info">
+                test
+              </v-btn>
+
             </v-toolbar>
 
             <div style="background-color: white; padding-left: 10px; padding-right: 10px;">
@@ -64,17 +68,21 @@
                 <v-layout row wrap style="text-align: left; padding-top: 8px; padding-bottom: 8px;">
 
                   <v-expansion-panel>
-                    <v-expansion-panel-content expand-icon="mdi-menu-down" v-for="(item,i) in panels" :key="i">
-                      <template v-slot:header>
-                        <div class="exp-tittle">{{item.name}}</div>
+                    <v-expansion-panel-content expand-icon="mdi-menu-down" v-for="(item,i) in panels" :key="i" >
+                     
+                      <template v-slot:header >
+                        
+                        <div class="exp-tittle" @click="updateComponent(i)">{{item.name}}</div>
+                        
                       </template>
+                      
                       <div v-if="i === 0">
-                        <PhenologicCurve/>
+                        <PhenologicCurve :key="componetPCkey"/>
                       </div>
                       <div v-if="i === 1">
-                        <ManagementZone/>
+                        <ManagementZone :key="componetMZkey"/>
                       </div>
-                      <div v-if="i === 2">
+                      <div v-if="i === 2" :key="componetCPkey">
                         <ClimaticPatterns/>
                       </div>
                     </v-expansion-panel-content>
@@ -130,7 +138,7 @@
 
             <div style="background-color: white; margin-top: 5px;">
               <div class="pa-2">
-                <span><strong>Dates for norm mean</strong></span><br />
+                <span><strong>Dates used for computation</strong></span><br />
 
                 <span v-for="(value) in outputDates" v-bind:key="value"  style="margin-left: 8px;">
                   {{value | truncate}} <br />
@@ -163,17 +171,12 @@
 import Map from 'ol/Map.js';
 import View from 'ol/View.js';
 import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
-import TileWMS from 'ol/source/TileWMS.js';
-import GeoJSON from 'ol/format/GeoJSON.js';
 import {Vector as VectorSource} from 'ol/source.js'
-import {Select} from 'ol/interaction.js';
 import {Fill, Stroke, Style} from 'ol/style.js';
 import moment from 'moment';
-import {transform} from 'ol/proj.js';
 import OSM from 'ol/source/OSM';
 import BingMaps from 'ol/source/BingMaps.js';
 
-//import {defaults} from 'ol/control';
 import StartDialog from '@/components/StartDialog.vue'
 import PhenologicCurve from '@/components/PhenologicCurve.vue'
 import ClimaticPatterns from '@/components/ClimaticPatterns.vue'
@@ -188,7 +191,7 @@ export default {
     ManagementZone
   },
   data: () => ({
-    startDialog: false,
+    startDialog: true,
     selectedBaseLayer: 'aerial',
     panels: [
       {"name": "Phenologic curve"}, 
@@ -202,15 +205,35 @@ export default {
     isLoading: false,
     outputPanel: false,
     outputDates: [],
+    componetPCkey: 0,
+    componetMZkey: 0,
+    componetCPkey: 0,
   }),
   methods: {
+    /**
+    * Re-render the entire component, takes index of the accordion
+    *
+    * @param {number} i
+    * @public
+    */
+    updateComponent(i){
+      if(i === 0){
+          this.componetPCkey ++
+          this.$eventBus.$emit('updateComponetPC', this.componetPCkey);
+      }else if (i === 1){
+          this.componetMZkey ++
+          this.$eventBus.$emit('updateComponetMZ', this.componetMZkey);
+      } else {
+        this.componetCPkey ++
+      } 
+    },
     /**
     * Initialize Map, base layer, styles and select interaction
     *
     * @public
     */
     initMap() {
-      var self = this;
+      
       var defaultStyle = new Style({
         stroke: new Stroke({
           color: '#3994bd',
@@ -220,18 +243,6 @@ export default {
           color: 'rgba(0, 0, 0, 0)'
         })
       });
-
-      // var selectedStyle = [
-      //   new Style({
-      //     stroke: new Stroke({
-      //       color: 'red',
-      //       width: 3
-      //     }),
-      //     fill: new Fill({
-      //       color: 'rgba(0, 0, 0, 0)'
-      //     })
-      //   })
-      // ];
 
       //Aerial layer
       var aerialLayer =  new TileLayer({
@@ -274,23 +285,6 @@ export default {
           minZoom: 8,
         })
       });
-
-      // this.interactionSelect = new Select();
-      // myMap.addInteraction(this.interactionSelect);
-
-      // this.interactionSelect.on('select', function(e) {
-      //   e.target.getFeatures().forEach(function(f){
-
-      //     if(!f.getProperties().culture && !self.isDrawing){
-      //       self.outputGeojson = f.getProperties();
-      //       if(self.isOutput){
-      //         self.outputPanel = true;
-      //       }
-      //     }else{
-      //       f.setStyle(self.defaultStyle);
-      //     }
-      //   })
-      // });
       
       this.map = myMap;
       this.$store.state.map = myMap;
@@ -366,6 +360,10 @@ export default {
     this.$eventBus.$on('show-outputPanel', (bool, dates)  => {
       this.outputPanel = bool;
       this.outputDates = dates;      
+    });
+
+    this.$eventBus.$on('updateComponetRoot', (i)  => {
+      this.updateComponent(i);      
     });
 
   },

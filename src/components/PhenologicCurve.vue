@@ -1,7 +1,7 @@
 <template>
     <div>
         <div style="background-color: white; padding-left: 10px; padding-right: 10px;">
-        <UserPolygons/>
+        <UserPolygons :key="componetUPkey"/>
             <v-form ref="form" style="margin-top: 10px; margin-bottom: 5px; text-size: 10px;" lazy-validation >
                 <v-layout row wrap style="text-align: left; padding-top: 8px;">
 
@@ -95,14 +95,15 @@ export default {
         inputDateRules: [
         v => !!v || ''
         ],
-        startDate: "2017-01-01",
-        endDate: "2020-06-31",
+        startDate: "2020-05-01",
+        endDate: "2020-06-30",
         menuStartDate: false,
         menuEndDate: false,
         isLoading: false,
         pcDialog: false,
         diagramURL: "",
         isSelected: false,
+        componetUPkey: 0,
     }),
     methods: {
         pcService(){
@@ -161,6 +162,9 @@ export default {
     created(){
         this.$eventBus.$on('is-selected', (bool)  => {
             this.isSelected = bool;            
+        });
+        this.$eventBus.$on('updateComponetPC', (i)  => {
+            this.componetUPkey = i          
         });
     }
 };

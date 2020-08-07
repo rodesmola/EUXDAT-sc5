@@ -3,7 +3,7 @@
      
         <div style="background-color: white; padding-left: 10px; padding-right: 10px;">
             
-            <UserPolygons/>
+            <UserPolygons :key="componetUPkey"/>
 
             <v-form ref="form" style="margin-top: 10px; margin-bottom: 5px; text-size: 10px;" lazy-validation >
                 <v-layout row wrap style="text-align: left; padding-top: 8px;">
@@ -85,7 +85,7 @@
 <script>
 import UserPolygons from '@/components/UserPolygons.vue';
 import TileWMS from 'ol/source/TileWMS.js';
-import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
+import {Tile as TileLayer} from 'ol/layer.js';
 
 export default {
     name: "ManagementZone",
@@ -104,6 +104,7 @@ export default {
         isLoading: false,          
         isOutput: false,
         isSelected: false,
+        componetUPkey: 0,
     }),
     methods: {
         mzService(){
@@ -114,8 +115,6 @@ export default {
              if(this.endDate){
                  url = url.concat('enddate/', this.endDate, '/')
              }
-
-            //var url = 'https://sc5-backend.test.euxdat.eu/backend/management-zone/startdate/2018-06-01/enddate/2018-09-15/'
 
             var headers = {
                 'accept': 'application/json'  ,
@@ -190,16 +189,9 @@ export default {
         * @public
         */
         resetFrom(){
-        
-            this.isOutput = false;
-            this.outputPanel = false;             
-
             this.$eventBus.$emit('remove-outputRaster', 'outputRaster');
             this.$eventBus.$emit('show-outputPanel', false, [])
-            //this.$refs.form.reset();
-            this.startDate = "2020-05-01";
-            this.endDate = "";
-
+            this.$eventBus.$emit('updateComponetRoot', 1)
         },//resetFrom
         saveStartDate (date) {
             this.$refs.menuStartDate.save(date)
@@ -219,6 +211,9 @@ export default {
     created(){
         this.$eventBus.$on('is-selected', (bool)  => {
             this.isSelected = bool;            
+        });
+        this.$eventBus.$on('updateComponetMZ', (i)  => {
+            this.componetUPkey = i          
         });
     }
 };

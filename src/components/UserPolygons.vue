@@ -117,15 +117,10 @@
 </template>
 
 <script>
-import Map from 'ol/Map.js';
-import View from 'ol/View.js';
-import {Tile as TileLayer, Vector as VectorLayer} from 'ol/layer.js';
-import BingMaps from 'ol/source/BingMaps.js';
+
 import GeoJSON from 'ol/format/GeoJSON';
-import VectorSource from 'ol/source/Vector';
-import {Draw, Select} from 'ol/interaction.js';
-import {Fill, Stroke, Style, Circle} from 'ol/style.js';
-import OSM from 'ol/source/OSM';
+import {Draw} from 'ol/interaction.js';
+import {Fill, Stroke, Style} from 'ol/style.js';
 
 export default {
     name: "UserPolygons",
@@ -166,10 +161,9 @@ export default {
         /**
         * Get all the user polygons and add them to the map
         *
-        * @param {boolean} isInit
         * @public
         */
-        getUserLayers(isInit){  
+        getUserLayers(){  
  
             var url = 'https://geodb-devel.test.euxdat.eu/xalkidiki/'.concat(this.$store.state.user.preferred_username,
                 '/fields/epsg/4326/geojson');
@@ -225,8 +219,6 @@ export default {
             });
 
             feature.setStyle(this.selectedStyle)
-            //this.interactionSelect.getFeatures().push(feature);
-            //console.log(this.$store.state.map.getInteractions())
             this.polygonBBOX = feature.getGeometry().getExtent();
 
             this.$store.state.selectedPolygon = feature;
@@ -343,7 +335,7 @@ export default {
 
     },
     mounted: function(){
-       this.getUserLayers(true);
+       this.getUserLayers();
        this.initComponent();
     },
     created(){
