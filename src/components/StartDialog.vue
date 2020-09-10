@@ -25,17 +25,16 @@
                                 <span class="title" style="color: #1e2f4d;">Information support for field use recommendations</span>
                             </div>                    
                             <p>
-                                The Workflow system is designed as an expert system supporting decision making for field interventions planning and actual use recommendations. 
-                                The system will link spatial datasets (actual weather and forecast, soil data, land cover type, management zones etc.) to provide actual use 
-                                recommendations and past compliance checks for farmers for individual fields and crops. Such information is important for planning of several 
-                                actions: a) management interventions in the field, b) accessibility of the field with heavy machinery like harvester, manure spreader or base 
-                                fertiliser spreader, c) soil situation (e.g. NPK and water content). Actual weather at the field is needed to decide about pesticide sprays or 
-                                fertiliser applications to be possible and effective at a particular time. This scenario is mainly focused on fields and crops protection. 
+                                TManagement zones describe areas within a field that exhibit similar vegetation development. These occur due to within-field-differences in topography, 
+                                soil type or texture, local climate, management strategies (stock). We aim to develop a method that would pre-select only cloud-free images from 
+                                Sentinel-2 image and select this from start of the season when heterogeneities due to above parameters tend to be the highest. The user will then 
+                                be asked to provide minimum and maximum fertilizer levels that will be distributed within the computed levels. The number of classes is flexible 
+                                and will reflect the heterogeneity level. 
                             </p>
                             <p style="margin-bottom: 15px;">
-                                The following list shows concrete applications, made possible by queries to the designed expert system. Note that all applications rely, among 
-                                others, also on soil moisture in-situ data available from PESSL‘s instrumentation at various depths (10 to 100 cm).  
-                                First two services of Workflow include:
+                                The following list shows concrete applications, made possible by queries to the designed expert system. Note that all applications rely, 
+                                among others, also on soil moisture in-situ data available from PESSL‘s instrumentation at various depths (10 to 100 cm). 
+                                As so, these services can be provided only for fields where this or similar soil moisture instrumentation is installed:
                             </p>
                             <p>
                                 <span class="title" style="color: #37aa48; font-size 12px;">
@@ -48,18 +47,19 @@
                                 seasonal and interannual variations in climate. This service provides a phenological curve for given user’s field with basic statistical 
                                 information i.e. max biomass, DOY of the highest biomass increase and decrease. As such you may compare phenological performance of your crops 
                                 in space and time.
+
                             </p>  
                             <p style="margin-left: 20px;">
                                 <strong>Algorithm specifications: </strong> 
                             </p>
                             <p style="margin-left: 20px; margin-bottom: 15px;">   
-                                Retrieve cloud-free scenes for a given field using FIS services and MUNDI WCS SCL service of level 2A product.
-                                While cloud information is available for each Sentinel2 scene, this represents the cloud percentage per entire 100x100km scene. We however need to 
-                                know the cloud probability for given field. This is provided with help of the SCL cloud algorithm that can be acquired via WCS service in space and time.             
+                                Retrieve cloud-free scenes for a given field using FIS services and MUNDI WCS SCL service of level 2A product. While cloud information is available 
+                                for each Sentinel2 scene, this represents the cloud percentage per entire 100x100km scene. We however need to know the cloud probability for given field.
+                                 This is provided with help of the SCL cloud algorithm that can be acquired via WCS service.             
                             </p>
                             <p>
                                 <span class="title" style="color: #37aa48; font-size 12px;">
-                                Management zone map for fertilizer and spraying 
+                                Application map for fertilizer and spraying 
                                 </span>
                             </p>
                             <p>
