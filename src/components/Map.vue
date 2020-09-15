@@ -103,7 +103,7 @@
                 </v-btn-toggle>
 
                 <div class="" style="background-color: white; padding-left: 10px; padding-right: 10px;">
-                  <v-radio-group v-model="selectedBaseLayer" :mandatory="false" v-on:change="setLayerVisibility(map)" style="padding-top: 14px;">
+                  <v-radio-group v-model="selectedBaseLayer" :mandatory="false" v-on:change="setLayerVisibility()" style="padding-top: 14px;">
                     <v-radio color="#47a34b" label="Open Street Map" value="osm"></v-radio>
                     <v-radio color="#47a34b" label="Aerial" value="aerial" ></v-radio>
                   </v-radio-group>
@@ -300,19 +300,34 @@ export default {
     /**
     * Controls the base layers visibility
     *
-    * @param {object} map
     * @public
     */
-    setLayerVisibility(map){
+    setLayerVisibility(){
       var self = this;
       if(this.selectedBaseLayer === 'osm'){
-        self.getLayerFromMapByName(map, 'aerial').setVisible(false);
-        self.getLayerFromMapByName(map, 'osm').setVisible(true);
+        self.getLayerFromMapByName('aerial').setVisible(false);
+        self.getLayerFromMapByName('osm').setVisible(true);
       }else{
-        self.getLayerFromMapByName(map, 'aerial').setVisible(true);
-        self.getLayerFromMapByName(map, 'osm').setVisible(false);
+        self.getLayerFromMapByName('aerial').setVisible(true);
+        self.getLayerFromMapByName('osm').setVisible(false);
       }
     },//setLayerVisibility
+    /**
+    * Get the map layer by name and return it as a OL layer object
+    *        
+    * @param {string} name
+    * @return {object}
+    * @public
+    */
+    getLayerFromMapByName(name){
+        var layer;
+        this.$store.state.map.getLayers().forEach(function(lyr) {
+            if(lyr.get('name') === name){
+                layer = lyr;
+            }
+        });
+        return layer;
+    },//getLayerFromMapByName    
     /**
     * Create an alert with custom message
     *
