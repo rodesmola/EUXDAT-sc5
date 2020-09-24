@@ -63,8 +63,10 @@
                 <v-divider></v-divider>
                 <v-card-text>
                     <v-flex xs12  class="pa-3" >
-                    <v-img :src="diagramURL" alt=""></v-img>
-                  <span v-html="diagramURL"></span> 
+                   <img v-bind:src="diagramURL" />
+
+                    
+                    
                     </v-flex>
                 </v-card-text>
             </v-card>
@@ -135,8 +137,13 @@ export default {
 
             this.$http.post(url, geoJSON).then(response => {
                 self.isLoading = false;
-                
-                self.diagramURL = response.body;
+               
+               self.diagramURL = response.body;
+
+// https://stackoverflow.com/questions/20784145/display-image-from-http-response-with-image-content-type
+// https://stackoverflow.com/questions/46492356/render-base64-image-in-vue-js
+
+
                 this.$eventBus.$emit('show-alert', "success", response.statusText);
             }, response => {
                 self.isLoading = false;
