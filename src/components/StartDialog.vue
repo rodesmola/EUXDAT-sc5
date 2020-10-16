@@ -18,10 +18,10 @@
                 <v-tabs-items v-model="tab">
 
                     <v-tab-item :key="1" value="is">
-                        <v-card flat>
+                        <v-card flat class="pa-2">
 
                             <div style="margin-bottom: 15px; margin-top: 15px">
-                                <img style="width: 160px; position: absolute; opacity: 0.2; bottom: 70px; right: 5px;" src="../assets/logo2.png" alt="">
+                                <img style="width: 160px; position: absolute; opacity: 0.2; bottom: 5px; right: 5px;" src="../assets/logo2.png" alt="">
                                 <span class="title" style="color: #1e2f4d;">Information support for field use recommendations</span>
                             </div>                    
                             <p>
@@ -82,15 +82,14 @@
                                 </ul>
                             </p>
 
-
                         </v-card>
                     </v-tab-item>
 
                     <v-tab-item :key="2" value="cp">
-                        <v-card flat>
+                        <v-card flat class="pa-2">
                                     
                             <div style="margin-bottom: 15px; margin-top: 15px">
-                                <img style="width: 160px; position: absolute; opacity: 0.2; bottom: 70px; right: 5px;" src="../assets/logo2.png" alt="">
+                                <img style="width: 160px; position: absolute; opacity: 0.2; bottom: 5px; right: 5px;" src="../assets/logo2.png" alt="">
                                 <span class="title" style="color: #1e2f4d;">Climate pattern changes</span>
                             </div> 
                             <p>

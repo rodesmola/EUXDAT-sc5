@@ -41,9 +41,27 @@
 
 
         <v-flex id="map" style="max-height: 100vh; height: 100vh; padding: 0px; margin: 0px;">
+          <div id="mapsight" v-if="isPointer"></div>
+
+          <!----------- Lat/Long control start --------->
+          <div class="flex xs12 sm5 md4 lg2" v-if="isPointer" style="position: absolute; z-index: 10; top:80px; left: 45%;">           
+              <v-flex xs12  row style="background-color: white;">
+                <v-layout row wrap>
+                  <v-flex xs6 class="pl-3 pr-3">
+                     <span> <strong>Latitude</strong>:</span> <br/> <span>{{mapCoords.lat}}</span>
+                  </v-flex>
+                  <v-flex xs6 class="pl-3 pr-3">
+                    <span> <strong>Longitude</strong>:</span> <br/> <span>{{mapCoords.long}}</span>
+                        
+                  </v-flex>               
+                </v-layout>
+              </v-flex>           
+          </div>
+          <!----------- Lat/Long control end --------->
+
 
           <!------------ Service form start ------------>
-          <div class="flex xs12 sm5 md4 lg3 xl2" style="position: absolute; z-index: 10; top:80px; left: 10px; background-color: #27304c;">
+          <div class="flex xs12 sm5 md5 lg4 xl3" style="position: absolute; z-index: 10; top:80px; left: 10px; background-color: #27304c;">
             <v-toolbar class="green" tabs  height="42px">
               <v-toolbar-title>
                 <img style="width: 30px;" src="../assets/logo_1-1.png" alt="">
@@ -64,11 +82,11 @@
 
                   <v-expansion-panel>
                     <v-expansion-panel-content expand-icon="mdi-menu-down" v-for="(item,i) in panels" :key="i" >
-                     
-                      <template v-slot:header >                        
-                        <div class="exp-tittle" @click="updateComponent(i)">{{item.name}}</div>                      
+
+                      <template v-slot:header >
+                        <div class="exp-tittle" @click="updateComponent(i)">{{item.name}}</div>
                       </template>
-                      
+
                       <div v-if="i === 0">
                         <PhenologicCurve :key="componetPCkey"/>
                       </div>
@@ -80,7 +98,7 @@
                       </div>
                     </v-expansion-panel-content>
                   </v-expansion-panel>
-                  
+
                 </v-layout>
               </v-form>
 
@@ -138,7 +156,7 @@
                 </span>
               </div>
               <v-img height="110" width="250" contain src="https://mapserver.test.euxdat.eu/cgi-bin/mapserv?map=/maps/management-zone/07a205f3-f2a4-44ef-a04c-d33dd4b4fc09/lai.map&SERVICE=WMS&VERSION=1.3.0&REQUEST=GetLegendGraphic&FORMAT=image/png&TRANSPARENT=true&HEIGHT=200&WIDTH=400&LAYER=lai&SLD_version=1.1.0" alt=""></v-img>
-              
+
             </div>
           </div>
           <!------------ Output panel MZ end ------------>
@@ -187,11 +205,11 @@ export default {
     startDialog: true,
     selectedBaseLayer: 'aerial',
     panels: [
-      {"name": "Phenologic curve"}, 
-      {"name": "Management zone"}, 
+      {"name": "Phenologic curve"},
+      {"name": "Management zone"},
       {"name": "Cimatic pattenrs"}
     ],
-    isValid: false,    
+    isValid: false,
     isAlert: false,
     alertMsg: "",
     alertType: "error",
@@ -201,6 +219,11 @@ export default {
     componetPCkey: 0,
     componetMZkey: 0,
     componetCPkey: 0,
+    isPointer: false,
+    mapCoords: {
+      lat: 0,
+      long: 0,
+    },
   }),
   methods: {
     /**
@@ -213,12 +236,15 @@ export default {
       if(i === 0){
           this.componetPCkey ++
           this.$eventBus.$emit('updateComponetPC', this.componetPCkey);
+          this.isPointer = false;
       }else if (i === 1){
           this.componetMZkey ++
           this.$eventBus.$emit('updateComponetMZ', this.componetMZkey);
+          this.isPointer = false;
       } else {
         this.componetCPkey ++
-      } 
+        this.isPointer = true;
+      }
     },
     /**
     * Initialize Map, base layer, styles and select interaction
@@ -226,7 +252,7 @@ export default {
     * @public
     */
     initMap() {
-      
+
       var defaultStyle = new Style({
         stroke: new Stroke({
           color: '#3994bd',
@@ -253,7 +279,7 @@ export default {
       var osm = new TileLayer({
         name: 'osm',
         source: new OSM()
-      })      
+      })
       osm.setVisible(false);
 
       var drawLayer = new VectorLayer({
@@ -271,15 +297,24 @@ export default {
           osm
         ],
         view: new View({
-          projection: 'EPSG:4326', 
-          center: [12.14, 48.51],          
+          projection: 'EPSG:4326',
+          center: [12.14, 48.51],
           zoom: 11,
           minZoom: 8,
         })
       });
-      
+
       this.map = myMap;
       this.$store.state.map = myMap;
+
+      var self = this;
+      myMap.on('moveend', function () {  
+        var center = myMap.getView().getCenter(); 
+        self.mapCoords.lat = center[1].toString().substring(0, 6)
+        self.mapCoords.long = center[0].toString().substring(0, 6)   
+        self.$store.state.mapCoords = self.mapCoords;
+      });
+
     },//initMap
     /**
     * zoom map controls
@@ -314,7 +349,7 @@ export default {
     },//setLayerVisibility
     /**
     * Get the map layer by name and return it as a OL layer object
-    *        
+    *
     * @param {string} name
     * @return {object}
     * @public
@@ -327,7 +362,7 @@ export default {
             }
         });
         return layer;
-    },//getLayerFromMapByName    
+    },//getLayerFromMapByName
     /**
     * Create an alert with custom message
     *
@@ -356,7 +391,7 @@ export default {
     this.initMap();
   },
   created(){
-    
+
     this.user = JSON.parse(window.atob(this.$keycloak.token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
     this.$store.state.user = this.user;
 
@@ -366,11 +401,11 @@ export default {
 
     this.$eventBus.$on('show-outputPanel', (bool, dates)  => {
       this.outputPanel = bool;
-      this.outputDates = dates;      
+      this.outputDates = dates;
     });
 
     this.$eventBus.$on('updateComponetRoot', (i)  => {
-      this.updateComponent(i);      
+      this.updateComponent(i);
     });
 
   },
@@ -399,10 +434,23 @@ export default {
 }
 
 .exp-tittle{
-  color: #37aa48; 
-  font-size: 20px !important;	
-  font-family: Roboto,sans-serif !important; 
-  font-weight: 500; line-height: 1 !important; 	
+  color: #37aa48;
+  font-size: 20px !important;
+  font-family: Roboto,sans-serif !important;
+  font-weight: 500; line-height: 1 !important;
   letter-spacing: .02em !important;
 }
+
+#mapsight {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	width: 51px;
+	height: 51px;
+	margin: -26px;
+	pointer-events: none;
+	z-index: 100;
+	background: url("../assets/epsg-target-large.png") 0 0 no-repeat;
+}
+
 </style>

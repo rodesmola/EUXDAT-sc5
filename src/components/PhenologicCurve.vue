@@ -50,12 +50,12 @@
         </div>   
 
         <!------------ Phenologic curve dialog ------------>
-        <v-dialog v-model="pcDialog" max-width="800">
+        <v-dialog v-model="pcDialog" max-width="850">
             <v-card v-if = !isLoading> 
                 <v-card-title class="headline">
                     <img style="width: 130px;" src="../assets/logo_titulo.png" alt="">
                     <v-spacer></v-spacer>
-                    <v-btn icon title="Download graphic" @click="downloadGraph('default')">
+                    <v-btn icon title="Download graphic" @click="downloadGraph()">
                     <v-icon color="#27304c">archive</v-icon>
                     </v-btn>
                 </v-card-title>
@@ -63,10 +63,7 @@
                 <v-divider></v-divider>
                 <v-card-text>
                     <v-flex xs12  class="pa-3" >
-                   <img v-bind:src="diagramURL" />
-
-                    
-                    
+                        <img style="width: 800px" :src="diagramURL"/>                                       
                     </v-flex>
                 </v-card-text>
             </v-card>
@@ -95,10 +92,10 @@ export default {
     props: {},
     data: () => ({
         inputDateRules: [
-        v => !!v || ''
+            v => !!v || ''
         ],
         startDate: "2020-05-01",
-        endDate: "2020-06-30",
+        endDate: "2020-09-31",
         menuStartDate: false,
         menuEndDate: false,
         isLoading: false,
@@ -136,13 +133,8 @@ export default {
                 }
 
             this.$http.post(url, geoJSON).then(response => {
-                self.isLoading = false;
-               
-               self.diagramURL = response.body;
-
-// https://stackoverflow.com/questions/20784145/display-image-from-http-response-with-image-content-type
-// https://stackoverflow.com/questions/46492356/render-base64-image-in-vue-js
-
+                self.isLoading = false;              
+                self.diagramURL = 'https://sc5-backend.test.euxdat.eu'.concat(response.body.url);
 
                 this.$eventBus.$emit('show-alert', "success", response.statusText);
             }, response => {
@@ -151,6 +143,14 @@ export default {
             });
         
         },
+        /**
+        * Open the image in other browser tab to force to be download
+        *
+        * @public
+        */
+        downloadGraph(){
+            window.open(this.diagramURL) 
+        },        
         saveStartDate (date) {
             this.$refs.menuStartDate.save(date)
         },

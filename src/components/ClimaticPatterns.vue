@@ -1,16 +1,16 @@
 <template>
-<div>  
-    <div>        
+    <div>  
+    <div>            
         <v-flex xs12 pl-2 row class="hidden-md-and-down">
             <v-layout row wrap>
             <p style="color: #27304c; font-size 6px;" class="pl-2 pr-2">
-                Select an analisys to run for the area you are seeing in the map. 
+                Select an analisys to run for the coordinates showed on top of the map. 
                 Then click the "run" button to display the result.
             </p>
             </v-layout>
         </v-flex>                    
 
-        <v-flex sm9 xs9 md9 pa-2>
+        <v-flex sm9 xs9 md9 class="pl-3 pr-3">
             <v-combobox style="margin-top: 0px; padding-top: 0px"
             v-model="selectedMbService"
             :items="mbServices"
@@ -25,141 +25,89 @@
 
         <v-flex xs12 pl-2 row v-if="selectedMbService.value == 'history_frostrisk?'">
             <v-layout row wrap>
-            <p style="color: grey; font-size 8px; margin-bottom: 5px;">
-                <b>Cold event analysis:</b>
-                Probability of temperatures below or above a certain temperature threshold for a given time.
-            </p>
-            <v-flex xs6>
-                <v-text-field dense color="#77b942" type="number" v-model="cold_tmp_threshold" :value="cold_tmp_threshold"
-                label="Temperature threshold *" :rules="inputNumRules" required></v-text-field>
-            </v-flex>
-            <v-flex xs6>
-                <v-text-field color="#77b942" type="number" v-model="cold_dur_threshold" :value="cold_dur_threshold"
-                label="Duration threshold *" :rules="inputNumRules" required></v-text-field>
-            </v-flex>
+                <v-flex xs12 class="pl-3 pr-3">
+                    <p style="color: grey; font-size 8px; margin-bottom: 5px;">
+                        <b>Cold event analysis:</b>
+                        Probability of temperatures below or above a certain temperature threshold for a given time.
+                    </p>
+                </v-flex>
+                <v-flex xs6 class="pl-3 pr-3">
+                    <v-text-field hide-details hide-no-data hide-selected dense color="#77b942" type="number" v-model="cold_tmp_threshold" :value="cold_tmp_threshold"
+                    label="Temperature threshold *" :rules="inputNumRules" required></v-text-field>
+                </v-flex>
+                <v-flex xs6 class="pl-3 pr-3">
+                    <v-text-field hide-details hide-no-data hide-selected dense color="#77b942" type="number" v-model="cold_dur_threshold" :value="cold_dur_threshold"
+                    label="Duration threshold *" :rules="inputNumRules" required></v-text-field>
+                </v-flex>
             </v-layout>
         </v-flex>
 
         <v-flex xs12 pl-2 row v-if="selectedMbService.value == 'history_heatrisk?'">
             <v-layout row wrap>
-            <p style="color: grey; font-size 8px;">
-                <b>Warm event analysis:</b>
-                Probability of temperatures below or above a certain temperature threshold for a given time.
-            </p>
-            <v-flex xs6>
-                <v-text-field dense color="#77b942" type="number" v-model="warn_tmp_threshold" :value="warn_tmp_threshold"
-                label="Temperature threshold *" :rules="inputNumRules" required></v-text-field>
-            </v-flex>
-            <v-flex xs6>
-                <v-text-field color="#77b942" type="number" v-model="warn_dur_threshold" :value="warn_dur_threshold"
-                label="Duration threshold *" :rules="inputNumRules" required></v-text-field>
-            </v-flex>
+                <v-flex xs12 class="pl-3 pr-3">
+                    <p style="color: grey; font-size 8px;">
+                        <b>Warm event analysis:</b>
+                        Probability of temperatures below or above a certain temperature threshold for a given time.
+                    </p>
+                </v-flex>
+                <v-flex xs6 class="pl-3 pr-3">
+                    <v-text-field hide-details hide-no-data hide-selected dense color="#77b942" type="number" v-model="warn_tmp_threshold" :value="warn_tmp_threshold"
+                    label="Temperature threshold *" :rules="inputNumRules" required></v-text-field>
+                </v-flex>
+                <v-flex xs6 class="pl-3 pr-3">
+                    <v-text-field hide-details hide-no-data hide-selected dense color="#77b942" type="number" v-model="warn_dur_threshold" :value="warn_dur_threshold"
+                    label="Duration threshold *" :rules="inputNumRules" required></v-text-field>
+                </v-flex>
             </v-layout>
         </v-flex>
 
         <v-flex xs12 pl-2 row v-if="selectedMbService.value == 'history_preciprisk?'">
             <v-layout row wrap>
-            <p style="color: grey; font-size 8px;">
-                <b>Precipitation analysis:</b>
-                evaluates precipitation amounts in a week above a certain threshold. Similar to cold and warm events,
-                estimate strong precipitation events can be estimated for scheduling activities accordingly.
-            </p>
-            <v-flex xs6>
-                <v-text-field dense color="#77b942" type="number" v-model="prec_threshold" :value="prec_threshold"
-                label="Precipitation threshold *" :rules="inputNumRules" required></v-text-field>
-            </v-flex>
+                <v-flex xs12 class="pl-3 pr-3">
+                    <p style="color: grey; font-size 8px;">
+                        <b>Precipitation analysis:</b>
+                        evaluates precipitation amounts in a week above a certain threshold. Similar to cold and warm events,
+                        estimate strong precipitation events can be estimated for scheduling activities accordingly.
+                    </p>
+                </v-flex>
+                <v-flex xs6 class="pl-3 pr-3">
+                    <v-text-field hide-details hide-no-data hide-selected dense color="#77b942" type="number" v-model="prec_threshold" :value="prec_threshold"
+                    label="Precipitation threshold *" :rules="inputNumRules" required></v-text-field>
+                </v-flex>
             </v-layout>
         </v-flex>
 
         <v-flex xs12 pl-2 row  v-if="selectedMbService.value == 'history_watercapacity?'">
             <v-layout row wrap>
-            <p style="color: grey; font-size 8px;">
-                <b>Water capacity:</b>
-                estimated probability of remaining soil water amount. Select the maximum amount of soil water capacity depending on your soil and crop type.
-            </p>
-            <v-flex xs6>
-                <v-text-field dense color="#77b942" type="number" v-model="wat_cap_threshold" :value="wat_cap_threshold"
-                label="Maximum available soil water capacity threshold *" :rules="inputNumRules" required></v-text-field>
-            </v-flex>
+                <v-flex xs12 class="pl-3 pr-3">
+                    <p style="color: grey; font-size 8px;">
+                        <b>Water capacity:</b>
+                        estimated probability of remaining soil water amount. Select the maximum amount of soil water capacity depending on your soil and crop type.
+                    </p>
+                </v-flex>
+                <v-flex xs6 class="pl-3 pr-3">
+                    <v-text-field hide-details hide-no-data hide-selected dense color="#77b942" type="number" v-model="wat_cap_threshold" :value="wat_cap_threshold"
+                    label="Maximum available soil water capacity threshold *" :rules="inputNumRules" required></v-text-field>
+                </v-flex>
             </v-layout>
         </v-flex>
 
         <v-flex xs12 pl-2 row  v-if="selectedMbService.value == 'history_cloudcover?'">
             <v-layout row wrap>
-            <p style="color: grey; font-size 8px;">
-                <b>Cloud cover:</b>
-                cloud free hours per day.
-            </p>
-            <v-flex xs6>
-                <v-text-field dense color="#77b942" type="number" v-model="cloud_cvr_threshold" :value="cloud_cvr_threshold"
-                label="Cloud cover threshold % *" :rules="inputNumRules" required></v-text-field>
-            </v-flex>
+                <v-flex xs12 class="pl-3 pr-3">
+                    <p style="color: grey; font-size 8px;">
+                        <b>Cloud cover:</b>
+                        cloud free hours per day.
+                    </p>
+                </v-flex>
+                <v-flex xs6 class="pl-3 pr-3">
+                    <v-text-field hide-no-data hide-selected dense color="#77b942" type="number" v-model="cloud_cvr_threshold" :value="cloud_cvr_threshold"
+                    label="Cloud cover threshold % *" :rules="inputNumRules" required></v-text-field>
+                </v-flex>
             </v-layout>
         </v-flex>
-
-        <v-flex xs12 pl-2 row  v-if="selectedMbService.value == 'predict-growth-stages'">
-            <v-layout row wrap>
-
-            <v-flex xs6>
-                <v-menu ref="menuPlantingDate" v-model="menuPlantingDate" :close-on-content-click="false" :nudge-right="40" lazy
-                transition="scale-transition" offset-y full-width min-width="290px">
-                <template v-slot:activator="{ on }">
-                    <v-text-field color="#5cb860" :value="growth_stages.planting_date" slot="activator" label="Planting date*"
-                    :rules="inputDateRules" prepend-icon="event" readonly v-on="on"></v-text-field>
-                </template>
-                <v-date-picker ref="picker" v-model="growth_stages.planting_date" scrollable color="#5cb860" first-day-of-week="1"
-                    :max="new Date().toISOString().substr(0, 10)" min="1985-01-01" @change="savePlantingDate">
-                </v-date-picker>
-                </v-menu>
-            </v-flex>
-            <v-flex xs6>
-                <v-menu ref="menuStemDate" v-model="menuStemDate" :close-on-content-click="false" :nudge-right="40" lazy
-                transition="scale-transition" offset-y full-width min-width="290px">
-                <template v-slot:activator="{ on }">
-                    <v-text-field color="#5cb860" :value="growth_stages.stem_elong_date" slot="activator" label="STEM date*"
-                    :rules="inputDateRules" prepend-icon="event" readonly v-on="on"></v-text-field>
-                </template>
-                <v-date-picker ref="picker" v-model="growth_stages.stem_elong_date" scrollable color="#5cb860" first-day-of-week="1"
-                    :max="new Date().toISOString().substr(0, 10)" min="1985-01-01" @change="saveStemDate">
-                </v-date-picker>
-                </v-menu>
-            </v-flex>    
-
-            <v-flex xs6>
-                <v-text-field dense color="#77b942" type="number" v-model="growth_stages.T_base" :value="growth_stages.T_base"
-                label="Temp base *" :rules="inputNumRules" required></v-text-field>
-            </v-flex>
-            <v-flex xs6>
-                <v-text-field dense color="#77b942" type="number" v-model="growth_stages.T_max" :value="growth_stages.T_max"
-                label="Temp max *" :rules="inputNumRules" required></v-text-field>
-            </v-flex>
-
-            <v-flex sm9 xs6 md6 lg9 xlg6 pa-1>
-                <v-combobox style="margin-top: 0px; padding-top: 0px"
-                v-model="growth_stages.crop_name"
-                :items="gs_cropName"
-                item-text="name"
-                item-value="value"
-                label="Select crop name"
-                color="green"
-                ></v-combobox>
-            </v-flex>
-
-            <v-flex sm9 xs6 md6 lg9 xlg6 pa-1>
-                <v-combobox style="margin-top: 0px; padding-top: 0px"
-                v-model="growth_stages.w_domain"
-                :items="gs_wDomain"
-                item-text="name"
-                item-value="value"
-                label="Select domain"
-                color="green"
-                ></v-combobox>
-            </v-flex>
-
-            </v-layout>
-        </v-flex>
-                    
-        <v-flex xs12 sm12 md12 lg12 class="text-xs-right" style="padding: 0px; margin-bottom: 5px;">
+       
+        <v-flex xs12 sm12 md12 lg12 class="text-xs-right mt-2" style="padding: 0px; margin-bottom: 5px;">
             <v-btn small round color="#27304c" :disabled="!selectedMbService" :loading="isLoading" dark @click="mbService(selectedMbService)" title="Run service" >
             RUN
             </v-btn>
@@ -407,7 +355,7 @@ export default {
                                         
                     setTimeout(function(){ 
                         self.isLoading = false;                                                 
-                        self.$eventBus.$emit('show-alert', "success", "Diagram retrieved successfully"); 
+                        self.$eventBus.$emit('show-alert', "success", response.statusText + "Diagram retrieved successfully"); 
                         self.mbDialog = true;
                     }, 4000);                           
                 }, response => {
