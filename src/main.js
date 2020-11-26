@@ -5,7 +5,7 @@ import 'vuetify/dist/vuetify.min.css' // Ensure you are using css-loader
 import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
 import VueKeyCloak from '@dsb-norge/vue-keycloak-js'
 import VueResource from 'vue-resource'
-
+import Vuelidate from 'vuelidate'
 import store from './store.js'
 
 Vue.prototype.$eventBus = new Vue()
@@ -16,6 +16,8 @@ Vue.use(VueResource)
 Vue.use(Vuetify, { //material icons
   iconfont: 'mdi'
 })
+
+Vue.use(Vuelidate)
 
 Vue.use(VueKeyCloak, {
   config: {

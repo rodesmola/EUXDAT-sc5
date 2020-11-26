@@ -86,6 +86,7 @@
 import UserPolygons from '@/components/UserPolygons.vue';
 import TileWMS from 'ol/source/TileWMS.js';
 import {Tile as TileLayer} from 'ol/layer.js';
+import CONST from "../const";
 
 export default {
     name: "ManagementZone",
@@ -94,6 +95,7 @@ export default {
     },
     props: {},
     data: () => ({
+        euxdatURL: CONST.euxdatURL,
         inputDateRules: [
             v => !!v || ''
         ],
@@ -111,18 +113,18 @@ export default {
 
             this.isLoading = true;        
             var self = this;
-             var url = 'https://sc5-backend.test.euxdat.eu/backend/management-zone/startdate/'.concat(this.startDate, '/');
-             if(this.endDate){
-                 url = url.concat('enddate/', this.endDate, '/')
-             }
+            var url = this.euxdatURL.concat('/startdate/', this.startDate, '/');
+
+            if(this.endDate){
+                url = url.concat('enddate/', this.endDate, '/')
+            }
 
             var headers = {
                 'accept': 'application/json'  ,
                 'Content-Type': 'application/json'
             };
 
-            var geoJSON =
-                {
+            var geoJSON = {
                 'type': 'FeatureCollection',
                 'crs': {
                 'type': 'name',

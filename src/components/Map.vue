@@ -207,7 +207,7 @@ export default {
     panels: [
       {"name": "Phenologic curve"},
       {"name": "Management zone"},
-      {"name": "Cimatic pattenrs"}
+      {"name": "Generic climate risk assessment"}
     ],
     isValid: false,
     isAlert: false,

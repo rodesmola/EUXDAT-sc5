@@ -84,6 +84,7 @@
 
 <script>
 import UserPolygons from '@/components/UserPolygons.vue'
+import CONST from "../const";
 export default {
     name: "PhenologicCurve",
     components: {
@@ -91,6 +92,7 @@ export default {
     },
     props: {},
     data: () => ({
+        euxdatURL: CONST.euxdatURL,
         inputDateRules: [
             v => !!v || ''
         ],
@@ -108,10 +110,9 @@ export default {
         pcService(){
 
             this.isLoading = true;
-            this.pcDialog = true;
 
             var self = this;
-            var url = 'https://sc5-backend.test.euxdat.eu/backend/phenology/startdate/'.concat(this.startDate, '/enddate/', this.endDate, '/png');
+            var url = this.euxdatURL.concat('/startdate/',this.startDate, '/enddate/', this.endDate, '/png');
 
             var geoJSON =
                 {
@@ -134,7 +135,8 @@ export default {
 
             this.$http.post(url, geoJSON).then(response => {
                 self.isLoading = false;              
-                self.diagramURL = 'https://sc5-backend.test.euxdat.eu'.concat(response.body.url);
+                self.diagramURL = this.euxdatURL.concat(response.body.url);
+                self.pcDialog = true;
 
                 this.$eventBus.$emit('show-alert', "success", response.statusText);
             }, response => {
