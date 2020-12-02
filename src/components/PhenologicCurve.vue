@@ -112,7 +112,7 @@ export default {
             this.isLoading = true;
 
             var self = this;
-            var url = this.euxdatURL.concat('/startdate/',this.startDate, '/enddate/', this.endDate, '/png');
+            var url = this.euxdatURL.concat('phenology/startdate/',this.startDate, '/enddate/', this.endDate, '/png');
 
             var geoJSON =
                 {

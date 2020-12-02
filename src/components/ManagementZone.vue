@@ -113,7 +113,7 @@ export default {
 
             this.isLoading = true;        
             var self = this;
-            var url = this.euxdatURL.concat('/startdate/', this.startDate, '/');
+            var url = this.euxdatURL.concat('management-zone/startdate/', this.startDate, '/');
 
             if(this.endDate){
                 url = url.concat('enddate/', this.endDate, '/')
