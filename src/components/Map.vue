@@ -65,7 +65,7 @@
             <v-toolbar class="green" tabs  height="42px">
               <v-toolbar-title>
                 <img style="width: 30px;" src="../assets/logo_1-1.png" alt="">
-                <span style="font-size: 18px; margin-left: 5px;">Demonstrator</span>
+                <span style="font-size: 18px; margin-left: 5px;">Field use recommendations scenario</span>
               </v-toolbar-title>
 
               <v-spacer></v-spacer>
@@ -234,15 +234,19 @@ export default {
     */
     updateComponent(i){
       if(i === 0){
-          this.componetPCkey ++
-          this.$eventBus.$emit('updateComponetPC', this.componetPCkey);
-          this.isPointer = false;
+        this.componetPCkey ++
+        this.$eventBus.$emit('updateComponetPC', this.componetPCkey);
+        this.$eventBus.$emit('remove-outputRaster', 'outputRaster');
+        this.$eventBus.$emit('show-outputPanel', false, [])
+        this.isPointer = false;
       }else if (i === 1){
-          this.componetMZkey ++
-          this.$eventBus.$emit('updateComponetMZ', this.componetMZkey);
-          this.isPointer = false;
+        this.componetMZkey ++
+        this.$eventBus.$emit('updateComponetMZ', this.componetMZkey);
+        this.isPointer = false;
       } else {
         this.componetCPkey ++
+        this.$eventBus.$emit('remove-outputRaster', 'outputRaster');
+        this.$eventBus.$emit('show-outputPanel', false, [])
         this.isPointer = true;
       }
     },

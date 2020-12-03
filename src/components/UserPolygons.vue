@@ -15,7 +15,7 @@
                 ></v-combobox>
             </v-flex>
 
-            <v-flex sm6 xs12 md4>
+            <v-flex sm6 xs12 md4 class="pt-3">
                 <v-layout row wrap>
                     <v-btn flat icon color="green" v-if="isSelected" :disabled="isDrawing || isOutput"
                         style="margin: 6px 2px; width: 25px;" @click="zoomToPolygon(selectedPolygon.properties.pk)" title="Zoom to polygon">

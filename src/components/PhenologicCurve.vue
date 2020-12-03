@@ -110,9 +110,9 @@ export default {
         pcService(){
 
             this.isLoading = true;
-
+            this.pcDialog = true;
             var self = this;
-            var url = this.euxdatURL.concat('phenology/startdate/',this.startDate, '/enddate/', this.endDate, '/png');
+            var url = this.euxdatURL.concat('/backend/phenology/startdate/',this.startDate, '/enddate/', this.endDate, '/png');
 
             var geoJSON =
                 {
@@ -135,9 +135,7 @@ export default {
 
             this.$http.post(url, geoJSON).then(response => {
                 self.isLoading = false;              
-                self.diagramURL = this.euxdatURL.concat(response.body.url);
-                self.pcDialog = true;
-
+                self.diagramURL = this.euxdatURL.concat(response.body.url);                
                 this.$eventBus.$emit('show-alert', "success", response.statusText);
             }, response => {
                 self.isLoading = false;
