@@ -97,7 +97,7 @@ export default {
             v => !!v || ''
         ],
         startDate: "2020-05-01",
-        endDate: "2020-09-31",
+        endDate: "2020-09-30",
         menuStartDate: false,
         menuEndDate: false,
         isLoading: false,
