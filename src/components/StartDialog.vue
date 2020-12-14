@@ -24,17 +24,13 @@
                                 <img style="width: 160px; position: absolute; opacity: 0.2; bottom: 5px; right: 5px;" src="../assets/logo2.png" alt="">
                                 <span class="title" style="color: #1e2f4d;">Information support for field use recommendations</span>
                             </div>                    
-                            <p>
-                                TManagement zones describe areas within a field that exhibit similar vegetation development. These occur due to within-field-differences in topography, 
-                                soil type or texture, local climate, management strategies (stock). We aim to develop a method that would pre-select only cloud-free images from 
-                                Sentinel-2 image and select this from start of the season when heterogeneities due to above parameters tend to be the highest. The user will then 
-                                be asked to provide minimum and maximum fertilizer levels that will be distributed within the computed levels. The number of classes is flexible 
-                                and will reflect the heterogeneity level. 
-                            </p>
                             <p style="margin-bottom: 15px;">
-                                The following list shows concrete applications, made possible by queries to the designed expert system. Note that all applications rely, 
-                                among others, also on soil moisture in-situ data available from PESSL‘s instrumentation at various depths (10 to 100 cm). 
-                                As so, these services can be provided only for fields where this or similar soil moisture instrumentation is installed:
+                                The designed system will link spatial datasets (weather, soil data, and land cover type, management zones) to provide actual 
+                                use recommendations and past compliance checks for single field and crops. This information is important for planning of management
+                                 operations in the field such as the accessibility of the field with heavy equipment, crop protection recommendation recommendation 
+                                 or i.e. for generation of application maps for fertilizer application.Separate services are available as prerequisites: 
+                                 Phenological curve computation demonstrating development of the plant biomass throughout the year using Sentinel -2 LAI data 
+                                 as a biomass surrogate and Management zone computation using multi-temporal operations on Sentinel-2 LAI data.   
                             </p>
                             <p>
                                 <span class="title" style="color: #37aa48; font-size 12px;">
